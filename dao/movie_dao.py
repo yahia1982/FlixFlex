@@ -1,0 +1,2 @@
+class MovieDao:
+    pass

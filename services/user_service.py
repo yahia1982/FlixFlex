@@ -1,4 +1,4 @@
-from dao.UserDao import UserDao
+from dao.user_dao import UserDao
 
 user_dao = UserDao()
 
