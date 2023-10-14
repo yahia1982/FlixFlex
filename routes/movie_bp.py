@@ -62,14 +62,16 @@ def remove_serie_favorite(serie_id: int, user_id: int):
     return movie_service.remove_serie_from_favorite(serie_id, user_id)
 
 
-@movie_bp.route('/movies/favorites',methods=['GET'])
-def get_favorites_movies():
-    return movie_service.get_favorites_movies()
+@movie_bp.route('/movies/user/<user_id>/favorites',methods=['GET'])
+@validate()
+def get_favorites_movies(user_id: int):
+    return movie_service.get_favorites_movies(user_id)
 
 
-@movie_bp.route('/series/favorites',methods=['GET'])
-def get_favorites_series():
-    return movie_service.get_favorites_series()
+@movie_bp.route('/series/user/<user_id>/favorites',methods=['GET'])
+@validate()
+def get_favorites_series(user_id: int):
+    return movie_service.get_favorites_series(user_id)
 
 @movie_bp.route('/movies/search/<keyword>',methods=['GET'])
 @validate()

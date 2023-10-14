@@ -186,7 +186,7 @@ class MovieDao:
         finally:
             db.close()
 
-    def get_favorites_movies(self):
+    def get_favorites_movies(self, user_id):
         sql = """
                     SELECT 
                         movie_id, 
@@ -200,12 +200,12 @@ class MovieDao:
                         trailer
                     FROM movies m
                         inner join favorite_list fl on fl.movie_id = m.movie_id 
-                             
+                    WHERE user_id = ?                             
                 """
-        rows = db.fetch_all(sql, ())
+        rows = db.fetch_all(sql, (user_id, ))
         return [self.movie_row_mapper(row) for row in rows]
 
-    def get_favorites_series(self):
+    def get_favorites_series(self, user_id):
         sql = """
                     SELECT 
                         serie_id,
@@ -220,8 +220,9 @@ class MovieDao:
                         trailer
                     FROM series s
                         inner join favorite_list fl on fl.movie_id = s.movie_id 
+                    WHERE user_id = ?      
                 """
-        rows = db.fetch_all(sql, ())
+        rows = db.fetch_all(sql, (user_id, ))
         return [self.serie_row_mapper(row) for row in rows]
 
     def look_for_movies(self, keyword):

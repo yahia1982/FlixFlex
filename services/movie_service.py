@@ -75,15 +75,15 @@ class MovieService:
             "message": "Serie removed from favorite list.",
         }, 200
 
-    def get_favorites_movies(self):
-        movies = movie_dao.get_favorites_movies()
+    def get_favorites_movies(self, user_id):
+        movies = movie_dao.get_favorites_movies(user_id)
         return {
             "status": "success",
             "data": movies
         }, 200
 
-    def get_favorites_series(self):
-        series = movie_dao.get_favorites_series()
+    def get_favorites_series(self, user_id):
+        series = movie_dao.get_favorites_series(user_id)
         return {
             "status": "success",
             "data": series
