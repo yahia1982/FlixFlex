@@ -18,5 +18,5 @@ class UserModel(BaseModel):
 @validate(body=UserModel)
 def register_user():
     data = request.body_params
-    result = user_service.register_user(data.username, data.password)
-    return jsonify(result)
+    result, status = user_service.register_user(data.username, data.password)
+    return jsonify(result), status

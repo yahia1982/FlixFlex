@@ -1,6 +1,6 @@
 import sqlite3
 
-db_name = 'FlixFlaxDB.db'
+db_name = 'data/FlixFlaxDB.db'
 
 class DbHelper:
     def __init__(self):
@@ -36,7 +36,7 @@ class DbHelper:
         if cursor:
             return cursor.fetchall()
 
-        return None
+        return []
 
     def fetch_one(self, query, params=None):
         cursor = self.execute_query(query, params)
