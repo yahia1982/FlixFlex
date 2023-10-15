@@ -126,5 +126,5 @@ class MovieService:
         serie = movie_dao.get_serie(serie_id)
         return {
             "status": "success",
-            "trailer_url": serie.ge('trailer')
+            "trailer_url": serie.get('trailer')
         }, 200

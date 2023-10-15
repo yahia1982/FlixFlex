@@ -138,7 +138,7 @@ class MovieDao:
                     release_date
                 LIMIT ? OFFSET ?
                 """
-        rows = db.fetch_all(sql, ((int(page) - 1) * page_size, page_size))
+        rows = db.fetch_all(sql, (page_size, (int(page) - 1) * page_size))
         return [self.movie_row_mapper(row) for row in rows]
 
     def get_series_page(self, page, page_size):
@@ -159,7 +159,7 @@ class MovieDao:
                     release_date
                 LIMIT ? OFFSET ?
                 """
-        rows = db.fetch_all(sql, ((int(page) - 1) * page_size, page_size))
+        rows = db.fetch_all(sql, (page_size, (int(page) - 1) * page_size))
         return [self.serie_row_mapper(row) for row in rows]
 
     def add_movie_serie_favorite(self, user_id, serie_id=None, movie_id=None):
@@ -177,11 +177,19 @@ class MovieDao:
 
     def remove_movie_serie_favorite(self, user_id, movie_id=None, serie_id=None):
         try:
+            params = [user_id]
             sql = """
             DELETE FROM favorite_list 
-            WHERE user_id = ? AND movie_id = ? AND serie_id = ?            
-            """
-            db.execute_query(sql, (user_id, movie_id, serie_id))
+            WHERE user_id = ?"""
+            if movie_id:
+                sql+=" AND movie_id = ?"
+                params.append(movie_id)
+            if serie_id:
+                sql+=" AND serie_id = ?"
+                params.append(serie_id)
+            print(sql, tuple(params))
+
+            db.execute_query(sql, tuple(params))
             db.commit()
         finally:
             db.close()
@@ -189,7 +197,7 @@ class MovieDao:
     def get_favorites_movies(self, user_id):
         sql = """
                     SELECT 
-                        movie_id, 
+                        m.movie_id, 
                         title, 
                         description, 
                         release_date, 
@@ -208,7 +216,7 @@ class MovieDao:
     def get_favorites_series(self, user_id):
         sql = """
                     SELECT 
-                        serie_id,
+                        s.serie_id,
                         title,
                         description,
                         release_date,
@@ -219,7 +227,7 @@ class MovieDao:
                         ranking,
                         trailer
                     FROM series s
-                        inner join favorite_list fl on fl.movie_id = s.movie_id 
+                        inner join favorite_list fl on fl.serie_id = s.serie_id 
                     WHERE user_id = ?      
                 """
         rows = db.fetch_all(sql, (user_id, ))
@@ -274,11 +282,13 @@ class MovieDao:
                        director, 
                        poster_url,             
                        runtime,                
-                       ranking
+                       ranking,
+                       trailer
                    FROM movies   
                    WHERE movie_id = ?             
                """
-        return  db.fetch_one(sql, (movie_id, ))
+
+        return self.movie_row_mapper(db.fetch_one(sql, (movie_id, )))
 
     def get_serie(self, serie_id):
         sql = """
@@ -291,9 +301,10 @@ class MovieDao:
                       poster_url,		
                       average_episode_runtime,
                       episodes,                
-                      ranking
+                      ranking,
+                      trailer
                   FROM series 
                   WHERE serie_id = ?
               """
-        return db.fetch_one(sql, (serie_id, ))
+        return self.serie_row_mapper(db.fetch_one(sql, (serie_id, )))
 
